@@ -1,4 +1,3 @@
-
 package com.example.vaultbalance;
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
@@ -38,8 +37,6 @@ public class BalanceScoreboardTask extends BukkitRunnable {
     private void updatePlayer(Player player) {
         Scoreboard board = player.getScoreboard();
 
-        // Falls der Spieler noch das Haupt-Scoreboard verwendet,
-        // bekommt er ein eigenes Scoreboard.
         if (board == null || board == Bukkit.getScoreboardManager().getMainScoreboard()) {
             board = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(board);
@@ -48,8 +45,6 @@ public class BalanceScoreboardTask extends BukkitRunnable {
         Objective objective = board.getObjective(OBJECTIVE_NAME);
 
         if (objective == null) {
-            // Kein Dollarzeichen im Objective-Titel.
-            // Das Dollarzeichen wird direkt vor der Zahl angezeigt.
             objective = board.registerNewObjective(
                     OBJECTIVE_NAME,
                     "dummy",
@@ -67,14 +62,11 @@ public class BalanceScoreboardTask extends BukkitRunnable {
             Score score = objective.getScore(target.getName());
             score.setScore(rounded);
 
-            // Betrag abkürzen, z. B.:
-            // 950 -> 950
-            // 1500 -> 1.5k
-            // 2000000 -> 2m
             String abbreviated = abbreviate(balance);
 
-            // Grünes Dollarzeichen + weiße Zahl
+            // Grünes "$" mit einem Leerzeichen vor der weißen Zahl
             Component numberComponent = Component.text("$", NamedTextColor.GREEN)
+                    .append(Component.text(" ", NamedTextColor.WHITE))
                     .append(Component.text(abbreviated, NamedTextColor.WHITE));
 
             score.numberFormat(NumberFormat.fixed(numberComponent));
@@ -115,9 +107,6 @@ public class BalanceScoreboardTask extends BukkitRunnable {
 
         String formatted = String.format(Locale.US, "%.1f", value);
 
-        // ".0" entfernen:
-        // 5.0k -> 5k
-        // 2.0m -> 2m
         if (formatted.endsWith(".0")) {
             formatted = formatted.substring(0, formatted.length() - 2);
         }
