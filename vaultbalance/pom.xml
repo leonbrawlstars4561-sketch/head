@@ -10,18 +10,16 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
-        <!-- Paper API -->
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
-        <!-- Vault API -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -29,7 +27,6 @@
     </repositories>
 
     <dependencies>
-        <!-- Paper API (provided, kommt vom Server) -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -37,7 +34,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Vault API (provided, kommt vom Vault-Plugin) -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
