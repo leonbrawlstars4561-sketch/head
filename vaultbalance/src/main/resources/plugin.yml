@@ -1,0 +1,13 @@
+name: VaultBalance
+version: '${project.version}'
+main: com.example.vaultbalance.VaultBalancePlugin
+api-version: '1.21'
+author: DeinName
+depend: [Vault]
+description: Zeigt den Vault-Kontostand jedes Spielers unter dem Namen an (Below Name), aktualisiert jede Sekunde.
+
+commands:
+  vaultbalance:
+    description: Aktiviert/Reload des VaultBalance-Plugins
+    usage: /vaultbalance reload
+    permission: vaultbalance.admin
