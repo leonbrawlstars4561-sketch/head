@@ -1,4 +1,4 @@
-```java
+
 package com.example.vaultbalance;
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
@@ -19,6 +19,7 @@ import java.util.Locale;
 public class BalanceScoreboardTask extends BukkitRunnable {
 
     private static final String OBJECTIVE_NAME = "vaultbal";
+
     private final Plugin plugin;
     private final Economy economy;
 
@@ -37,6 +38,8 @@ public class BalanceScoreboardTask extends BukkitRunnable {
     private void updatePlayer(Player player) {
         Scoreboard board = player.getScoreboard();
 
+        // Falls der Spieler noch das Haupt-Scoreboard verwendet,
+        // bekommt er ein eigenes Scoreboard.
         if (board == null || board == Bukkit.getScoreboardManager().getMainScoreboard()) {
             board = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(board);
@@ -45,12 +48,14 @@ public class BalanceScoreboardTask extends BukkitRunnable {
         Objective objective = board.getObjective(OBJECTIVE_NAME);
 
         if (objective == null) {
-            // Kein "$" im Objective-Titel, damit es nicht separat angezeigt wird.
+            // Kein Dollarzeichen im Objective-Titel.
+            // Das Dollarzeichen wird direkt vor der Zahl angezeigt.
             objective = board.registerNewObjective(
                     OBJECTIVE_NAME,
                     "dummy",
                     Component.empty()
             );
+
             objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
         }
 
@@ -62,9 +67,13 @@ public class BalanceScoreboardTask extends BukkitRunnable {
             Score score = objective.getScore(target.getName());
             score.setScore(rounded);
 
-            // Grünes "$" direkt vor der weißen Zahl
+            // Betrag abkürzen, z. B.:
+            // 950 -> 950
+            // 1500 -> 1.5k
+            // 2000000 -> 2m
             String abbreviated = abbreviate(balance);
 
+            // Grünes Dollarzeichen + weiße Zahl
             Component numberComponent = Component.text("$", NamedTextColor.GREEN)
                     .append(Component.text(abbreviated, NamedTextColor.WHITE));
 
@@ -74,14 +83,17 @@ public class BalanceScoreboardTask extends BukkitRunnable {
 
     /**
      * Formatiert einen Betrag abgekürzt:
+     *
      * 950 -> "950"
      * 1500 -> "1.5k"
-     * 2_000_000 -> "2m"
-     * 3_000_000_000 -> "3b"
-     * 4_000_000_000_000 -> "4t"
+     * 2000 -> "2k"
+     * 2500000 -> "2.5m"
+     * 3000000000 -> "3b"
+     * 4000000000000 -> "4t"
      */
     private String abbreviate(double amount) {
         double abs = Math.abs(amount);
+
         String suffix;
         double value;
 
@@ -103,6 +115,9 @@ public class BalanceScoreboardTask extends BukkitRunnable {
 
         String formatted = String.format(Locale.US, "%.1f", value);
 
+        // ".0" entfernen:
+        // 5.0k -> 5k
+        // 2.0m -> 2m
         if (formatted.endsWith(".0")) {
             formatted = formatted.substring(0, formatted.length() - 2);
         }
@@ -124,4 +139,4 @@ public class BalanceScoreboardTask extends BukkitRunnable {
         }
     }
 }
-```
+
