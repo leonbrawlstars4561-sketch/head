@@ -91,16 +91,16 @@ public class BalanceScoreboardTask extends BukkitRunnable {
 
         if (abs >= 1_000_000_000_000L) {
             value = amount / 1_000_000_000_000L;
-            suffix = "t";
+            suffix = "T";
         } else if (abs >= 1_000_000_000L) {
             value = amount / 1_000_000_000L;
-            suffix = "b";
+            suffix = "B";
         } else if (abs >= 1_000_000L) {
             value = amount / 1_000_000L;
-            suffix = "m";
+            suffix = "M";
         } else if (abs >= 1_000L) {
             value = amount / 1_000L;
-            suffix = "k";
+            suffix = "K";
         } else {
             return String.valueOf(Math.round(amount));
         }
