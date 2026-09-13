@@ -1,3 +1,4 @@
+
 package com.example.vaultbalance;
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
@@ -57,6 +58,7 @@ public class BalanceScoreboardTask extends BukkitRunnable {
         for (Player target : Bukkit.getOnlinePlayers()) {
             double balance = economy.getBalance(target);
 
+            // Interner Score
             int rounded = (int) Math.round(balance);
 
             Score score = objective.getScore(target.getName());
@@ -64,7 +66,7 @@ public class BalanceScoreboardTask extends BukkitRunnable {
 
             String abbreviated = abbreviate(balance);
 
-            // Grünes "$" mit einem Leerzeichen vor der weißen Zahl
+            // Grünes "$" + Leerzeichen + weiße Zahl
             Component numberComponent = Component.text("$", NamedTextColor.GREEN)
                     .append(Component.text(" ", NamedTextColor.WHITE))
                     .append(Component.text(abbreviated, NamedTextColor.WHITE));
@@ -74,14 +76,20 @@ public class BalanceScoreboardTask extends BukkitRunnable {
     }
 
     /**
-     * Formatiert einen Betrag abgekürzt:
+     * Formatiert einen Betrag abgekürzt, ohne die Nachkommastelle zu runden.
      *
-     * 950 -> "950"
-     * 1500 -> "1.5k"
-     * 2000 -> "2k"
-     * 2500000 -> "2.5m"
-     * 3000000000 -> "3b"
-     * 4000000000000 -> "4t"
+     * Beispiele:
+     *
+     * 950                  -> 950
+     * 1500                 -> 1.5K
+     * 1999                 -> 1.9K
+     * 2000                 -> 2K
+     * 2500000              -> 2.5M
+     * 2999999999           -> 2.9B
+     * 1950000000           -> 1.9B
+     * 1999999999           -> 1.9B
+     * 3000000000           -> 3B
+     * 4000000000000        -> 4T
      */
     private String abbreviate(double amount) {
         double abs = Math.abs(amount);
@@ -92,21 +100,42 @@ public class BalanceScoreboardTask extends BukkitRunnable {
         if (abs >= 1_000_000_000_000L) {
             value = amount / 1_000_000_000_000L;
             suffix = "T";
+
         } else if (abs >= 1_000_000_000L) {
             value = amount / 1_000_000_000L;
             suffix = "B";
+
         } else if (abs >= 1_000_000L) {
             value = amount / 1_000_000L;
             suffix = "M";
+
         } else if (abs >= 1_000L) {
             value = amount / 1_000L;
             suffix = "K";
+
         } else {
             return String.valueOf(Math.round(amount));
         }
 
-        String formatted = String.format(Locale.US, "%.1f", value);
+        /*
+         * Auf eine Nachkommastelle ABSCHNEIDEN.
+         *
+         * Math.round() oder %.1f alleine würde runden.
+         *
+         * Beispiele:
+         * 1.95 -> 1.9
+         * 1.99 -> 1.9
+         * 2.01 -> 2.0
+         */
+        double truncated = Math.floor(Math.abs(value) * 10.0) / 10.0;
 
+        if (value < 0) {
+            truncated = -truncated;
+        }
+
+        String formatted = String.format(Locale.US, "%.1f", truncated);
+
+        // ".0" entfernen
         if (formatted.endsWith(".0")) {
             formatted = formatted.substring(0, formatted.length() - 2);
         }
@@ -129,3 +158,5 @@ public class BalanceScoreboardTask extends BukkitRunnable {
     }
 }
 
+
+Der entscheidende Unterschied ist, dass die Anzeige jetzt mit `Math.floor(...)/10` **abschneidet**, bevor sie formatiert wird.
