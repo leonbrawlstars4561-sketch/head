@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class BalanceScoreboardTask extends BukkitRunnable {
 
-```
+
 private static final String OBJECTIVE_NAME = "vaultbal";
 
 private final Plugin plugin;
@@ -135,6 +135,6 @@ public void cleanupAll() {
         }
     }
 }
-```
+
 
 }
